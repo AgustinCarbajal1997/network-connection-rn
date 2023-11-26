@@ -23,13 +23,11 @@ function Home() {
 
   useEffect(() => {
     if (isConnected && data === null) {
-      console.log('entra a 1');
+      setAlertBlockApp(false);
       getUsers();
     } else if (isConnected === false && data === null) {
-      console.log('entra a 2');
       setAlertBlockApp(true);
     } else {
-      console.log('entra a 3');
       setAlertBlockApp(false);
     }
   }, [isConnected]);
