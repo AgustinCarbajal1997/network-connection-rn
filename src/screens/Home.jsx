@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, View} from 'react-native';
 import useNetworkContext from '../context/useNetworkContext';
 import ToastbarConnection from '../components/ToastBarConnection';
 import NetworkError from '../components/NetworkError';
