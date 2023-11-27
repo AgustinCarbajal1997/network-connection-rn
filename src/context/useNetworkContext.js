@@ -6,8 +6,7 @@ export const NetworkContext = createContext(null);
 export const NetworkContextProvider = ({children}) => {
   const [isConnected, setIsConnected] = useState(null);
   const [toastBar, setToastBar] = useState(false);
-  const [alertBlockRequest, setAlertBlockRequest] = useState(null);
-  const [alertBlockApp, setAlertBlockApp] = useState(false);
+  const [alertBlockRequest, setAlertBlockRequest] = useState(false);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(currentState => {
@@ -18,24 +17,10 @@ export const NetworkContextProvider = ({children}) => {
     return () => unsubscribe();
   }, []);
 
-  const openAlertBlockRequest = () => {
-    setAlertBlockRequest({
-      title: 'Hubo un problema de conexión',
-      message: 'No se pudo realizar la acción, intente más tarde',
-    });
-  };
-
-  const closeAlertBlockRequest = () => {
-    setAlertBlockRequest(null);
-  };
-
   const values = {
     toastBar,
     alertBlockRequest,
-    closeAlertBlockRequest,
-    openAlertBlockRequest,
-    alertBlockApp,
-    setAlertBlockApp,
+    setAlertBlockRequest,
     isConnected,
   };
 

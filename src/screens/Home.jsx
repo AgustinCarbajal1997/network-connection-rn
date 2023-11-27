@@ -12,24 +12,11 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const {
-    toastBar,
-    alertBlockRequest,
-    alertBlockApp,
-    setAlertBlockApp,
-    isConnected,
-    openAlertBlockRequest,
-  } = useNetworkContext();
+  const {toastBar, alertBlockRequest, isConnected, setAlertBlockRequest} =
+    useNetworkContext();
 
   useEffect(() => {
-    if (isConnected && data === null) {
-      setAlertBlockApp(false);
-      getUsers();
-    } else if (isConnected === false && data === null) {
-      setAlertBlockApp(true);
-    } else {
-      setAlertBlockApp(false);
-    }
+    if (data === null) getUsers();
   }, [isConnected]);
 
   const getUsers = async () => {
@@ -47,12 +34,12 @@ function Home() {
 
   const onSubmit = () => {
     if (!isConnected) {
-      openAlertBlockRequest();
+      setAlertBlockRequest(true);
       return;
     }
   };
 
-  if (alertBlockApp) {
+  if (!isConnected && data === null && !isLoading) {
     return <NetworkError />;
   }
 

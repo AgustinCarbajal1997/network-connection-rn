@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width,
     height: Dimensions.get('screen').height,
   },
+  closeContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
   containerElement: {
     minHeight: 100,
     paddingHorizontal: 15,
