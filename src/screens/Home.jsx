@@ -12,7 +12,7 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const {toastBar, alertBlockRequest, isConnected, setAlertBlockRequest} =
+  const {alertBlockRequest, isConnected, setAlertBlockRequest} =
     useNetworkContext();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ function Home() {
 
   return (
     <>
-      {toastBar && <ToastbarConnection />}
+      {!isConnected && <ToastbarConnection />}
       <View style={styles.container}>
         {alertBlockRequest && <AlertBlockRequest />}
         <Input onSubmit={onSubmit} />

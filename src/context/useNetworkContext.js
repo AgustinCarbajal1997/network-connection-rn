@@ -5,20 +5,17 @@ export const NetworkContext = createContext(null);
 
 export const NetworkContextProvider = ({children}) => {
   const [isConnected, setIsConnected] = useState(null);
-  const [toastBar, setToastBar] = useState(false);
   const [alertBlockRequest, setAlertBlockRequest] = useState(false);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(currentState => {
       setIsConnected(currentState.isConnected);
-      setToastBar(!currentState.isConnected);
     });
 
     return () => unsubscribe();
   }, []);
 
   const values = {
-    toastBar,
     alertBlockRequest,
     setAlertBlockRequest,
     isConnected,
