@@ -8,7 +8,11 @@ import UserItem from '../components/UserItem';
 import Input from '../components/Input';
 import styles from './styles';
 import AlertBlockRequest from '../components/AlertBlockRequest';
+
+const URL = 'https://gorest.co.in/public/v2/users/';
+
 function Home() {
+  const [user, setUser] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
@@ -16,13 +20,13 @@ function Home() {
     useNetworkContext();
 
   useEffect(() => {
-    if (data === null) getUsers();
+    if (data === null && isConnected) getUsers();
   }, [isConnected]);
 
   const getUsers = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://gorest.co.in/public/v2/users/');
+      const response = await fetch(URL);
       const users = await response.json();
       setData(users);
     } catch (error) {
@@ -32,10 +36,21 @@ function Home() {
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!isConnected) {
       setAlertBlockRequest(true);
       return;
+    }
+    try {
+      setIsLoading(true);
+      await fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify(user),
+      });
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
