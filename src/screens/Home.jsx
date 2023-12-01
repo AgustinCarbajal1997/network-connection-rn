@@ -59,7 +59,7 @@ function Home() {
   }
 
   return (
-    <>
+    <View>
       {!isConnected && <ToastbarConnection />}
       <View style={styles.container}>
         {alertBlockRequest && <AlertBlockRequest />}
@@ -73,7 +73,7 @@ function Home() {
           />
         )}
       </View>
-    </>
+    </View>
   );
 }
 
