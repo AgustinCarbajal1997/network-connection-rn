@@ -1,6 +1,5 @@
-/* eslint-disable */
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, View} from 'react-native';
+import {ActivityIndicator, FlatList, Text, View} from 'react-native';
 import useNetworkContext from '../context/useNetworkContext';
 import ToastbarConnection from '../components/ToastBarConnection';
 import NetworkError from '../components/NetworkError';
@@ -10,6 +9,7 @@ import styles from './styles';
 import AlertBlockRequest from '../components/AlertBlockRequest';
 
 const URL = 'https://gorest.co.in/public/v2/users/';
+const token = '';
 
 function Home() {
   const [user, setUser] = useState('');
@@ -21,7 +21,12 @@ function Home() {
 
   useEffect(() => {
     if (data === null && isConnected) getUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
+
+  const onChangeText = text => {
+    setUser(text);
+  };
 
   const getUsers = async () => {
     try {
@@ -44,6 +49,9 @@ function Home() {
     try {
       setIsLoading(true);
       await fetch(URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         method: 'POST',
         body: JSON.stringify(user),
       });
@@ -54,17 +62,22 @@ function Home() {
     }
   };
 
-  if (!isConnected && data === null && !isLoading) {
+  if (isConnected === false && data === null && !isLoading) {
     return <NetworkError />;
   }
 
   return (
-    <View>
-      {!isConnected && <ToastbarConnection />}
+    <>
+      {isConnected === false && <ToastbarConnection />}
       <View style={styles.container}>
         {alertBlockRequest && <AlertBlockRequest />}
-        <Input onSubmit={onSubmit} />
+        <Input onSubmit={onSubmit} onChangeText={onChangeText} value={user} />
         {isLoading && <ActivityIndicator />}
+        {error && (
+          <View>
+            <Text>Ha ocurrido un error al recuperar los datos</Text>
+          </View>
+        )}
         {data && (
           <FlatList
             data={data}
@@ -73,7 +86,7 @@ function Home() {
           />
         )}
       </View>
-    </View>
+    </>
   );
 }
 
