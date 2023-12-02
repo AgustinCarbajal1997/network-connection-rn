@@ -42,6 +42,7 @@ function Home() {
   };
 
   const onSubmit = async () => {
+    if (user === '') return;
     if (!isConnected) {
       setAlertBlockRequest(true);
       return;
@@ -55,6 +56,8 @@ function Home() {
         method: 'POST',
         body: JSON.stringify(user),
       });
+      setUser('');
+      setData([{name: user, id: Date.now()}, ...data]);
     } catch (error) {
       setError(error);
     } finally {
