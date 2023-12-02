@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ActivityIndicator, FlatList, Text, View} from 'react-native';
 import useNetworkContext from '../context/useNetworkContext';
 import ToastbarConnection from '../components/ToastBarConnection';
@@ -16,12 +17,19 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const {alertBlockRequest, isConnected, setAlertBlockRequest} =
-    useNetworkContext();
+
+  const {alertBlockRequest, isConnected} = useNetworkContext();
 
   useEffect(() => {
     if (data === null && isConnected) getUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
+
+  // se chequea si hay datos en async storage, si los hay resincroniza con el server
+  useEffect(() => {
+    if (isConnected) {
+      cleanAsyncStorageData();
+    }
   }, [isConnected]);
 
   const onChangeText = text => {
@@ -42,8 +50,9 @@ function Home() {
   };
 
   const onSubmit = async () => {
+    if (user === '') return;
     if (!isConnected) {
-      setAlertBlockRequest(true);
+      postAsyncStorageData(user);
       return;
     }
     try {
@@ -55,10 +64,48 @@ function Home() {
         method: 'POST',
         body: JSON.stringify(user),
       });
+      setUser('');
+      setData([{name: user, id: Date.now()}, ...data]);
     } catch (error) {
       setError(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const postAsyncStorageData = async value => {
+    try {
+      const users = await getAsyncStorageData();
+      const jsonValue =
+        users != null
+          ? JSON.stringify([...users, value])
+          : JSON.stringify([value]);
+      await AsyncStorage.setItem('users', jsonValue);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAsyncStorageData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('users');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const cleanAsyncStorageData = async () => {
+    const pendingUsers = await AsyncStorage.getItem('users');
+    if (!pendingUsers || !pendingUsers?.length) return;
+
+    /* aqui agregaras tu logica para sincronizar con el servidor (por ejemplo tu llamada POST) */
+
+    // finalmente si tu resincronización es exitosa, limpias tu async storage
+    try {
+      await AsyncStorage.setItem('users', JSON.stringify([]));
+    } catch (e) {
+      console.log(e);
     }
   };
 
